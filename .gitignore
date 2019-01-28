@@ -1,0 +1,5 @@
+a.out
+*.sem
+*.dat
+
+.DS_Store

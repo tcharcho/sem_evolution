@@ -33,7 +33,7 @@ using namespace std;
 #define verbose 1
 
 //File with training examples
-#define inputdata "TrainingM4C.dat"
+#define inputdata "DehydrinSet.dat"
 //Input length - needs to be a bit longer than the longest sequence
 #define IPL 5000
 //Maximum data size -- an upper bound onthe number of sequences in the data set

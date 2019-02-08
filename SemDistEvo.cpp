@@ -1,7 +1,7 @@
 /*
  *  Distance based SEM evolver.  This code learns to distinguish
  *  categories of DNA data.  The input file has the format:
- *  
+ *
  *  label SEQUENCE
  *  (repeat)
  *
@@ -43,15 +43,15 @@ using namespace std;
 //number of replicates to perform, number of mating events to use,
 //reporting interval,and maximum number of mutations in a new
 //structure.
-#define popsize 1000
+// #define popsize 1000
 #define tsize 7
 #define runs 30
 #define mevs 10000
 #define RI 100
-#define MNM 3
+// #define MNM 3
 
-//Population control details; number of states in each SEM
-#define states 6
+//Population control details; number of STATES in each SEM
+// #define STATES 6
 
 void readdata();           //read in the data
 void initalg();            //initialize the algorithm
@@ -72,14 +72,18 @@ aut pop[popsize];          //the population of automata
 double fit[popsize];       //fitness values
 int dx[popsize];           //sorting index
 
-int main(){//main routine
+int main()
+{//main routine
 
-fstream stat,crit;  //statistics and best SEM reporting channels
-char fn[60];        //file name construction buffer
-int run,mev;        //run and mating event counters
+  fstream stat,crit;  //statistics and best SEM reporting channels
+  char fn[60];        //file name construction buffer
+  int run,mev;        //run and mating event counters
 
   initalg();  //initialize the algorithm -- including reading in the data
-  crit.open("best.sem",ios::out);  //open the best structure reporting file
+  char fn2[60];
+  sprintf(fn2,"best_%d_%d_%d.sem",popsize, MNM, STATES);  //construct file name for best file
+
+  crit.open(fn2,ios::out);  //open the best structure reporting file
   for(run=0;run<runs;run++){//loop over requested replicates
     sprintf(fn,"run%02d.dat",run);  //construct file name for stat file
     stat.open(fn,ios::out);        //open the stat file
@@ -118,19 +122,19 @@ int numDNA(int c){//character to number
 
 void readdata(){//read in the data
 
-char buf[IPL];    //input buffer for characters
-int ibf[IPL];     //assembly buffer for bases
-fstream inp;      //input file
-int p;            //pointer into the data buffer
-int val;          //value of the current DNA base
-int i;            //loop index
+  char buf[IPL];    //input buffer for characters
+  int ibf[IPL];     //assembly buffer for bases
+  fstream inp;      //input file
+  int p;            //pointer into the data buffer
+  int val;          //value of the current DNA base
+  int i;            //loop index
 
   inp.open(inputdata,ios::in);  //open the input file
   NDI=0;                        //zero the data item counter
-  inp.getline(buf,IPL-1);       //read in the first data item  
+  inp.getline(buf,IPL-1);       //read in the first data item
   while(strlen(buf)>3){//while we still have data
     cate[NDI]=atoi(buf);  //capture the category
-    p=0;                  //initialize the data pointer 
+    p=0;                  //initialize the data pointer
     while(buf[p]!=' ')p++;//find the delimiter
     p++;                  //move past the delimiter
     leng[NDI]=0;          //zero the data length
@@ -150,11 +154,11 @@ int i;            //loop index
 
 void initalg(){//initialize the algorithm
 
-int i;  //loop index
+  int i;  //loop index
 
   srand48(RNS);  //seed the random number generator
   readdata();    //read in the data
-  for(i=0;i<popsize;i++)pop[i].create(states);  //allocate the SEMs
+  for(i=0;i<popsize;i++)pop[i].create(STATES);  //allocate the SEMs
 
 }
 
@@ -164,7 +168,7 @@ double delta,ttl;   //coordinate distance and total
 int i;              //loop index
 
   ttl=0.0;  //zero the accumulator
-  for(i=0;i<states;i++){//loop over the coordinates
+  for(i=0;i<STATES;i++){//loop over the coordinates
     delta=a[i]-b[i];    //find the coordinate difference
     ttl+=(delta*delta); //sum in the squared different
   }
@@ -175,8 +179,8 @@ int i;              //loop index
 
 double fitness(aut &A){//report the fitness of an automata
 
-static double inj[MDS][states];   //injected point buffer
-int cnt[states];                  //vector for reporting counts
+static double inj[MDS][STATES];   //injected point buffer
+int cnt[STATES];                  //vector for reporting counts
 int i,j;                          //loop indices
 int np;                           //counter for the number of distances
 int ttl;                          //the total of the count vector
@@ -188,8 +192,8 @@ double accu;                      //distance accumulator
     for(j=0;j<leng[i];j++)A.run(data[i][j]); //traverse data item
     A.report(cnt);  //retrieve the count
     ttl=0;          //zero the total
-    for(j=0;j<states;j++)ttl+=cnt[j];  //total the counts
-    for(j=0;j<states;j++)inj[i][j]=((double)cnt[j])/((double)ttl);  //save
+    for(j=0;j<STATES;j++)ttl+=cnt[j];  //total the counts
+    for(j=0;j<STATES;j++)inj[i][j]=((double)cnt[j])/((double)ttl);  //save
   }
   //Now get the average interclass distance
   accu=0.0;  //zero the accumulator
@@ -197,7 +201,7 @@ double accu;                      //distance accumulator
   for(i=0;i<NDI-1;i++)for(j=i+1;j<NDI;j++){//loop over the pairs
     if(cate[i]!=cate[j]){//if the categories are different
       accu+=EucDis(inj[i],inj[j]);  //sum in the distance
-      np++;                         //count the term summed in  
+      np++;                         //count the term summed in
     }
   }
   accu/=np;  //move to average distance between pairs
@@ -242,10 +246,10 @@ void report(ostream &aus){//make a statistical report
 dset D;   //data set for statistical reporting
 
   D.add(fit,popsize);  //register the fitness data
-  aus << D.Rmu() << " " << D.RCI95() << " " 
+  aus << D.Rmu() << " " << D.RCI95() << " "
       << D.Rsg() << " " << D.Rmax() << endl;  //report fitness data
   if(verbose==1){//if eye-candy requested
-    cout << D.Rmu() << " " << D.RCI95() << " " 
+    cout << D.Rmu() << " " << D.RCI95() << " "
          << D.Rsg() << " " << D.Rmax() << endl;  //report fitness data
   }
 

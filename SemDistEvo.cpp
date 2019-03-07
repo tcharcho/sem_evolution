@@ -182,9 +182,9 @@ double fitness(aut &A){//report the fitness of an automata
 static double inj[MDS][STATES];   //injected point buffer
 int cnt[STATES];                  //vector for reporting counts
 int i,j;                          //loop indices
-int np;                           //counter for the number of distances
 int ttl;                          //the total of the count vector
 double accu;                      //distance accumulator
+double accu2;                     //internal distance accumulator
 
   //compute the injection of the count vectors into Euclidian space
   for(i=0;i<NDI;i++){//loop over the data items
@@ -195,18 +195,17 @@ double accu;                      //distance accumulator
     for(j=0;j<STATES;j++)ttl+=cnt[j];  //total the counts
     for(j=0;j<STATES;j++)inj[i][j]=((double)cnt[j])/((double)ttl);  //save
   }
-  //Now get the average interclass distance
-  accu=0.0;  //zero the accumulator
-  np=0;      //zero the number of pairs
+
+  //Now compute the between/withing fitness
+  accu=0.0;    //zero the distance accumulator
+  accu2=0.0;   //zero the second distance accumulator
   for(i=0;i<NDI-1;i++)for(j=i+1;j<NDI;j++){//loop over the pairs
     if(cate[i]!=cate[j]){//if the categories are different
-      accu+=EucDis(inj[i],inj[j]);  //sum in the distance
-      np++;                         //count the term summed in
-    }
+      accu+=EucDis(inj[i],inj[j]);  //sum in the between distance
+    } else accu2+=EucDis(inj[i],inj[j]);  //sum in the within distance
   }
-  accu/=np;  //move to average distance between pairs
-  return(accu);  //this is the fitness
 
+  return(accu/(accu2+1));  //this is the fitness
 }
 
 void initpop(){//initialize a population

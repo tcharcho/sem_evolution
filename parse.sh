@@ -10,6 +10,9 @@ if [ "$1" != "" ]; then
     # echo $newFile
 
     grep fit $file | sort -n > $1/$newFile.dat
+
+    sed -i '' 's/ -fitness//g' $1/$newFile.dat
+
   done
 else
   echo "Must provide name for directory"

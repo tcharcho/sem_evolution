@@ -22,6 +22,7 @@ if [ "$1" != "" ]; then
   # Population
   for pop in 10 100 1000
   do
+    rm "$1/pop_$pop"
     for file in $1/*_${pop}_*.dat
     do
       cat $file >> "$1/pop_$pop"
@@ -31,6 +32,7 @@ if [ "$1" != "" ]; then
   # MNM
   for mnm in 3 7 9
   do
+    rm "$1/mnm_$mnm"
     for file in $1/*_${mnm}_*.dat
     do
       cat $file >> "$1/mnm_$mnm"
@@ -40,6 +42,7 @@ if [ "$1" != "" ]; then
   # Number of states
   for states in 6 18 24
   do
+    rm "$1/states_$states"
     for file in $1/*_${states}.dat
     do
       cat $file >> "$1/states_$states"

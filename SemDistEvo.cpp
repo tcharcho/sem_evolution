@@ -84,8 +84,11 @@ int main(int argc, char *argv[]) {
 
   // Creating a directory
   if (mkdir(dir, 0777) == -1) {
-    cerr << "Error :  " << strerror(errno) << endl;
-    return 0;
+    // if the error isn't that the directory already exist, exit program
+    if (errno != 17) {
+      cerr << "Error :  " << strerror(errno) << endl;
+      return 0;
+    }
   }
 
   //construct file name for best file

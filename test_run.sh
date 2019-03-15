@@ -10,7 +10,7 @@ do
     for k in 3 50 70
     do
       g++ -lm -O3 SemDistEvo.cpp sem.cpp stat.cpp -Dpopsize=$i -DMNM=$j -DSTATES=$k
-      ./a.out
+      ./a.out $1
     done
   done
 done

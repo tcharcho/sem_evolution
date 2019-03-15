@@ -8,3 +8,4 @@ target:
 
 run:
 	bash test_run.sh $(dir)
+	bash parse.sh $(dir)

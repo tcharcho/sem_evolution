@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
   int run,mev;        //run and mating event counters
 
   if (argc > 1) sprintf(dir, "%s", argv[1]);
-  else sprintf(dir, "extra_runs");
+  else sprintf(dir, "test_runs");
 
   // Creating a directory
   if (mkdir(dir, 0777) == -1) {

@@ -20,7 +20,7 @@ if [ "$1" != "" ]; then
   # ------------- group data based on hyperparameter type and value ------------- #
 
   # Population
-  for pop in 5 2000 5000 #10 100 1000
+  for pop in 5 500 2000 #10 100 1000
   do
     rm "$1/pop_$pop"
     for file in $1/*_${pop}_*.dat
@@ -40,7 +40,7 @@ if [ "$1" != "" ]; then
   done
 
   # Number of states
-  for states in 3 50 70 #6 18 24
+  for states in 3 10 30 #6 18 24
   do
     rm "$1/states_$states"
     for file in $1/*_${states}.dat

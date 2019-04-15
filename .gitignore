@@ -1,5 +1,6 @@
-a.out
-*.sem
-run*.dat
+*.out
+
+*.dat
+*.marg
 
 .DS_Store

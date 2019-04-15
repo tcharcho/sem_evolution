@@ -1,9 +1,21 @@
 #!/bin/bash
 
-if [ "$1" != "" ]; then
+dirNames=("FF1_run_1" "FF2_run_1" "FF2_run_2" "production_run_1" "production_run_2" "production_run_3")
 
-  # ------------- Extract fitness data ------------- #
-  for file in $1/*.sem
+echo -e "\nExtracting marginal distrinution of fitness based on 3 hyperparameters:"
+echo "- Population size"
+echo "- Number of states"
+echo -e "- Maximum number of mutations\n\n"
+
+for dir in ${dirNames[@]}
+do
+  echo -e "Parsing data files in" $dir "...\n"
+
+  pop=()
+  mnm=()
+  states=()
+
+  for file in $dir/*.sem
   do
     # echo $file
     filename="$(cut -d'/' -f2 <<<"$file")"
@@ -11,49 +23,52 @@ if [ "$1" != "" ]; then
     newFile="$(cut -d'.' -f1 <<<"$filename")"
     # echo $newFile
 
-    grep fit $file | sort -n > $1/$newFile.dat
+    IFS='_' read -ra ADDR <<< "$newFile"
 
-    sed -i '' 's/ -fitness//g' $1/$newFile.dat
+    pop+=(${ADDR[1]})
+    mnm+=(${ADDR[2]})
+    states+=(${ADDR[3]})
+
+
   done
+
+  pop=($(echo "${pop[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+  mnm=($(echo "${mnm[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+  states=($(echo "${states[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 
 
   # ------------- group data based on hyperparameter type and value ------------- #
 
   # Population
-  for pop in 5 500 2000 #10 100 1000
+  for p in ${pop[@]}
   do
-    rm "$1/pop_$pop"
-    for file in $1/*_${pop}_*.dat
+    rm "$dir/pop_$p.marg"
+    for file in $dir/*_${p}_*.dat
     do
-      cat $file >> "$1/pop_$pop"
+      cat $file >> "$dir/pop_$p.marg"
     done
   done
 
   # MNM
-  for mnm in 3 7 9
+  for m in ${mnm[@]}
   do
-    rm "$1/mnm_$mnm"
-    for file in $1/*_${mnm}_*.dat
+    rm "$dir/mnm_$m.marg"
+    for file in $dir/*_${m}_*.dat
     do
-      cat $file >> "$1/mnm_$mnm"
+      cat $file >> "$dir/mnm_$m.marg"
     done
   done
 
   # Number of states
-  for states in 3 10 30 #6 18 24
+  for s in ${states[@]}
   do
-    rm "$1/states_$states"
-    for file in $1/*_${states}.dat
+    rm "$dir/states_$s.marg"
+    for file in $dir/*_${s}.dat
     do
-      cat $file >> "$1/states_$states"
+      cat $file >> "$dir/states_$s.marg"
     done
   done
 
-else
-  echo "Must provide name for directory"
-fi
-
-
-
+done
 
 
